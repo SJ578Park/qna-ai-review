@@ -1,6 +1,10 @@
 import { Timestamp } from 'firebase/firestore';
 
-export type Role = 'guest' | 'admin';
+export type Role = 'guest' | 'user' | 'admin';
+
+export type MessageStatus = 'draft' | 'approved' | 'rejected' | 'superseded';
+export type MessageRole = 'user' | 'admin' | 'ai';
+export type MessageKind = 'question' | 'answer' | 'note';
 
 export type Question = {
   id: string;
@@ -11,11 +15,37 @@ export type Question = {
   authorName?: string | null;
   createdAt: Timestamp;
   updatedAt?: Timestamp;
-  status: 'open' | 'answered' | 'locked';
+  status: 'open' | 'pending' | 'answered' | 'locked';
   officialAnswerId?: string | null;
+  lastMessageAt?: Timestamp | null;
   visibility?: 'public' | 'private';
+  hasDraftAnswer?: boolean;
+  pendingAnswerSource?: MessageRole | null;
+  pendingAnswerUpdatedAt?: Timestamp | null;
 };
 
+export interface Message {
+  id: string;
+  content: string;
+  role: MessageRole;
+  kind: MessageKind;
+  status: MessageStatus;
+  aiGenerated?: boolean;
+  sources?: Array<{ docId?: string; snippet?: string }>;
+  riskFlags?: string[];
+  inReplyTo?: string | null;
+  turn: number;
+  authorUid?: string | null;
+  authorName?: string | null;
+  createdAt: Timestamp;
+  updatedAt?: Timestamp;
+  approvedAt?: Timestamp;
+  approvedBy?: string;
+  revision?: number;
+  revisionOf?: string | null;
+}
+
+// Deprecated: Answer 타입은 이전 호환성을 위해 유지하되, 새 코드에서는 Message를 사용하세요.
 export type Answer = {
   id: string;
   body: string;
@@ -42,4 +72,3 @@ export type Guide = {
   createdAt: Timestamp;
   updatedAt?: Timestamp;
 };
-

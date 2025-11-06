@@ -3,12 +3,11 @@ import { useAuth } from '../auth/useAuth';
 
 interface AnswerItemProps {
   answer: Answer;
-  questionId: string;
   isOfficial?: boolean;
   onDelete?: () => void;
 }
 
-export function AnswerItem({ answer, questionId, isOfficial, onDelete }: AnswerItemProps) {
+export function AnswerItem({ answer, isOfficial, onDelete }: AnswerItemProps) {
   const { user, role } = useAuth();
 
   const formatDate = (timestamp: any) => {
@@ -75,4 +74,3 @@ export function AnswerItem({ answer, questionId, isOfficial, onDelete }: AnswerI
     </div>
   );
 }
-

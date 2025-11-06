@@ -31,7 +31,7 @@ service cloud.firestore {
       // 수정: 소유자(작성자) 또는 관리자
       allow update, delete: if isAdmin() || (isSignedIn() && isOwner(resource.data.authorUid));
 
-      // answers 서브컬렉션
+      // answers 서브컬렉션 (이전 호환성 유지)
       match /answers/{aid} {
         allow read: if true;
 
@@ -40,6 +40,26 @@ service cloud.firestore {
 
         // 수정/삭제: 관리자 또는 답변 소유자
         allow update, delete: if isAdmin() || (isSignedIn() && isOwner(resource.data.authorUid));
+      }
+
+      // messages 서브컬렉션 (새로운 멀티턴 구조)
+      match /messages/{mid} {
+        // 초안은 관리자만 읽을 수 있고, 승인된 메시지만 사용자에게 노출
+        allow read: if isAdmin() || (resource.data.status == 'approved');
+
+        // 메시지 생성: 로그인한 모든 사용자 (AI 초안은 서버 함수가 작성)
+        allow create: if isSignedIn();
+
+        // 메시지 업데이트/삭제: 관리자이거나 본인의 draft만 가능
+        allow update, delete: if
+          isAdmin() ||
+          (isSignedIn() &&
+           isOwner(resource.data.authorUid) &&
+           resource.data.status == 'draft' &&
+           request.resource.data.status == 'draft');
+
+        // draft → approved 전환은 관리자만 가능
+        allow update: if isAdmin();
       }
     }
 

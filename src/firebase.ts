@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, User } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 // 환경변수 확인 및 검증
 const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
@@ -43,7 +43,19 @@ export async function signIn(email: string, password: string) {
 
 // 이메일 회원가입 함수
 export async function signUp(email: string, password: string) {
-  return await createUserWithEmailAndPassword(auth, email, password);
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const user = userCredential.user;
+
+  // users collection에 사용자 프로필 저장 (role: 'user')
+  await setDoc(doc(db, 'users', user.uid), {
+    displayName: user.displayName || email.split('@')[0],
+    email: user.email,
+    role: 'user',
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+
+  return userCredential;
 }
 
 // 로그아웃 함수

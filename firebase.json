@@ -3,6 +3,16 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20",
+    "region": "asia-northeast3",
+    "environmentVariables": {
+      "GENKIT_MODEL": "gemini-1.5-pro-002",
+      "VERTEX_LOCATION": "us-central1",
+      "FUNCTION_REGION": "asia-northeast3"
+    }
+  },
   "hosting": {
     "public": "dist",
     "ignore": [
@@ -18,4 +28,3 @@
     ]
   }
 }
-

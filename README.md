@@ -62,6 +62,23 @@ npm run dev
 npm run build
 ```
 
+### 6. Cloud Functions (자동 답변)
+
+자동 답변 초안을 생성하는 Cloud Functions 코드는 `functions/` 디렉터리에 위치합니다. 최초 설정 시 다음 명령으로 의존성을 설치하고 타입스크립트 빌드를 실행하세요.
+
+```bash
+npm install --prefix functions
+npm run --prefix functions build
+```
+
+배포는 Firebase CLI를 통해 수행합니다.
+
+```bash
+firebase deploy --only functions
+```
+
+> Genkit 기반 답변 생성을 사용하려면 Vertex AI 접근 권한이 있는 서비스 계정과 관련 환경 변수를 함께 구성하세요. 환경 변수 설정 방법은 `functions/README.md` 참고.
+
 ## 프로젝트 구조
 
 ```
@@ -101,4 +118,3 @@ qna-ai-review/
 - 이메일 인증이 활성화되어 있어야 합니다.
 - Firestore 보안 규칙을 반드시 적용하세요.
 - 관리자 권한은 Custom Claims를 통해 설정됩니다.
-
